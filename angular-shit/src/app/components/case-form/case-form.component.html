@@ -1,0 +1,123 @@
+<div class="form-container">
+  <h2>Create New Case</h2>
+
+  <form [formGroup]="caseForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="client">Client Name</label>
+      <input
+        id="client"
+        type="text"
+        formControlName="client"
+        placeholder="Enter client name"
+      />
+      @if (client?.invalid && client?.touched) {
+        <div class="error">
+          @if (client?.errors?.['required']) {
+            <span>Client name is required</span>
+          }
+          @if (client?.errors?.['minlength']) {
+            <span>Client name must be at least 2 characters</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select
+        id="category"
+        formControlName="category"
+      >
+        <option value="">Select a category</option>
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+      @if (category?.invalid && category?.touched) {
+        <div class="error">
+          <span>Category is required</span>
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        rows="5"
+        placeholder="Enter case description"
+      ></textarea>
+      @if (description?.invalid && description?.touched) {
+        <div class="error">
+          @if (description?.errors?.['required']) {
+            <span>Description is required</span>
+          }
+          @if (description?.errors?.['minlength']) {
+            <span>Description must be at least 10 characters</span>
+          }
+        </div>
+      }
+    </div>
+ <div class="form-group">
+  <label for="priority">Priority</label>
+  <select
+    id="priority"
+    formControlName="priority"
+  >
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high">High</option>
+  </select>
+
+  @if (caseForm.get('priority')?.invalid && caseForm.get('priority')?.touched) {
+    <div class="error">
+      <span>Priority is required</span>
+    </div>
+  }
+</div>
+    <div class="form-group">
+      <label for="documents">Documents (Optional)</label>
+      <input
+        id="documents"
+        type="file"
+        multiple
+        (change)="onFileSelect($event)"
+      />
+      <small>You can select multiple files</small>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        [disabled]="caseForm.invalid"
+      >
+        Create Case
+      </button>
+      <button
+        type="button"
+        (click)="caseForm.reset()"
+      >
+        Clear
+      </button>
+    </div>
+  </form>
+
+  @if (submittedCases.length > 0) {
+    <div class="submitted-cases">
+      <h3>Created Cases</h3>
+      @for (case of submittedCases; track case.id) {
+        <div class="case-card">
+          <p><strong>Case ID:</strong> {{ case.id }}</p>
+          <p><strong>Client:</strong> {{ case.client }}</p>
+          <p><strong>Category:</strong> {{ case.category }}</p>
+          <p><strong>Description:</strong> {{ case.description }}</p>
+          @if (case.documents && case.documents.length > 0) {
+            <p><strong>Documents:</strong> {{ case.documents.join(', ') }}</p>
+          }
+          <p><strong>Created:</strong> {{ case.createdAt | date:'short' }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>
